@@ -131,7 +131,7 @@ func FromTerm(term Term) ld.Node {
 		return ld.NewLiteral(l.V, l.D.V, l.L)
 	} else if termType == "NamedNode" {
 		return ld.NewIRI(term.Value())
-	} else if termType == "BlankNode" || termType == "DefaultGraph" {
+	} else if termType == "Variable" || termType == "BlankNode" || termType == "DefaultGraph" {
 		return ld.NewBlankNode(term.Value())
 	}
 	return nil
@@ -148,8 +148,9 @@ func FromQuad(q *Quad) *ld.Quad {
 }
 
 // ToQuad converts ld.Quads to RDFJS quads
-func ToQuad(q *ld.Quad) *Quad {
-	S, P, O, G := ToTerm(q.Subject), ToTerm(q.Predicate), ToTerm(q.Object), ToTerm(q.Graph)
+func ToQuad(q *ld.Quad, variable bool) *Quad {
+	S, P, O, G := ToTerm(q.Subject, variable), ToTerm(q.Predicate, variable),
+		ToTerm(q.Object, variable), ToTerm(q.Graph, variable)
 	s, _ := json.Marshal(S)
 	p, _ := json.Marshal(P)
 	o, _ := json.Marshal(O)
@@ -158,13 +159,15 @@ func ToQuad(q *ld.Quad) *Quad {
 }
 
 // ToTerm converts an ld.Node to an RDFJS term
-func ToTerm(node ld.Node) Term {
+func ToTerm(node ld.Node, variable bool) Term {
 	switch node := node.(type) {
 	case *ld.IRI:
 		return &term{"NamedNode", node.Value}
 	case *ld.BlankNode:
 		if node.Attribute == "" {
 			return &term{"DefaultGraph", ""}
+		} else if variable {
+			return &term{"Variable", node.Attribute}
 		}
 		return &term{"BlankNode", node.Attribute}
 	case *ld.Literal:
