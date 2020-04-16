@@ -1,6 +1,6 @@
 # go-rdfjs
 
-> Go interfaces for RDF terms and quads
+> Go implementation of the RDF data model
 
 This is a zero-dependency module implementing the RDF data model. It's a faithful and idiomatic adaptation of the [RDFJS JSON-based data model](http://rdf.js.org/data-model-spec/) and it comes with JSON marshalers and unmarshalers for easy interop with JavaScript libraries like [n3.js](https://github.com/rdfjs/N3.js), [jsonld.js](https://github.com/digitalbazaar/jsonld.js), and [graphy.js](https://github.com/blake-regalia/graphy.js).
 
