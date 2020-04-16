@@ -34,9 +34,11 @@ Literals have a string value, a string language, and a named node datatype, whic
 
 - `NewLiteral(value: string, language: string, datatype: *DefaultGraph) *Literal`
 
-If the given datatype does not have a value of `rdf:langString`, then the resulting `*Literal` will have no langauge, even if one is passed. You can use the exported `var RDFLangString *NamedNode` to avoid repeatedly constructing an `rdf:langString` term.
+If the given datatype does not have a value of `rdf:langString`, then the resulting `*Literal` will have no langauge, even if one is passed. You can use the exported `var RDFLangString *NamedNode` value to avoid repeatedly constructing an `rdf:langString` term.
 
-Each of the term structs implements `MarshalJSON` and `UnmarshalJSON`; however it is often necessary to marshal and unmarshal a term without knowing its type in advance.
+### Marshal and Unmarshal generic terms
+
+Each of the term structs implements `MarshalJSON` and `UnmarshalJSON`; however it is often necessary to marshal and unmarshal a term without knowing its type in advance:
 
 - `MarshalTerm(t Term) ([]byte, error)`
 - `UnmarshalTerm(data []byte) (Term, error)`
@@ -49,8 +51,10 @@ type Quad = [4]Term
 
 Quads are represented interally as 4-tuples of `Term` interfaces. This was chosen instead of a struct type to support advanced uses like arithmetic or permutations of term positions. Quad terms can be accessed by name with the `.Subject(): Term`, `.Predicate(): Term`, `.Object(): Term`, and `.Graph(): Term` methods.
 
-The user is responsible for checking that the terms of a quad are valid for their positions (literals a subjects, etc). A new quad can be created with the constructor:
+Quads implement also `MarshalJSON` and `UnmarshalJSON`.
+
+A new quad can be created with the constructor:
 
 - `NewQuad(subject, predicate, object, graph Term) *Quad`
 
-If `graph` is `nil`, the exported default graph `var Default *DefaultGraph` will be used.
+The user is responsible for checking that the terms of a quad are valid for their positions (literals as subjects, etc). If `graph` is `nil`, the exported default graph `var Default *DefaultGraph` will be used.
