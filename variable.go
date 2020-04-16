@@ -13,6 +13,8 @@ type Variable struct{ value string }
 // NewVariable creates a new variable
 func NewVariable(value string) *Variable { return &Variable{value} }
 
+func (node *Variable) String() string { return node.value }
+
 // TermType of a variable is "Variable"
 func (node *Variable) TermType() string { return VariableType }
 

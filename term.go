@@ -8,6 +8,9 @@ import (
 // ErrTermType indicates an unexpected or mismatching term types
 var ErrTermType = errors.New("Mismatching term types")
 
+// ErrParseTerm indicates that a string could not parse into a term
+var ErrParseTerm = errors.New("Error parsing term")
+
 // XSDString is the default datatype for literals
 var XSDString = &NamedNode{"http://www.w3.org/2001/XMLSchema#string"}
 
@@ -16,6 +19,7 @@ var RDFLangString = &NamedNode{"http://www.w3.org/1999/02/22-rdf-syntax-ns#langS
 
 // Term is the interface that all terms satisfy
 type Term interface {
+	String() string
 	TermType() string
 	Value() string
 	Equal(term Term) bool

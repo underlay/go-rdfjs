@@ -1,6 +1,9 @@
 package rdfjs
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // NamedNodeType is the TermType for IRIs
 const NamedNodeType = "NamedNode"
@@ -12,6 +15,8 @@ type NamedNode struct{ value string }
 
 // NewNamedNode creates a new IRI
 func NewNamedNode(value string) *NamedNode { return &NamedNode{value} }
+
+func (node *NamedNode) String() string { return fmt.Sprintf("<%s>", node.value) }
 
 // TermType of an IRI is "NamedNode"
 func (node *NamedNode) TermType() string { return NamedNodeType }

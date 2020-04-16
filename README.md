@@ -10,6 +10,7 @@ The five term types are the structs `NamedNode`, `BlankNode`, `Literal`, `Defaul
 
 ```golang
 type Term interface {
+  String() string
   TermType() string
   Value() string
   Equal(term Term) bool
@@ -43,6 +44,10 @@ Each of the term structs implements `MarshalJSON` and `UnmarshalJSON`; however i
 - `MarshalTerm(t Term) ([]byte, error)`
 - `UnmarshalTerm(data []byte) (Term, error)`
 
+### Serialize and parse strings
+
+Terms also implement a `.String() string` method that return their N-Quads term representation (e.g. `"example"^^<http://example.com>`). The `ParseTerm(s: string): Term` function parses terms back from this format.
+
 ## Quads
 
 ```golang
@@ -58,3 +63,7 @@ A new quad can be created with the constructor:
 - `NewQuad(subject, predicate, object, graph Term) *Quad`
 
 The user is responsible for checking that the terms of a quad are valid for their positions (literals as subjects, etc). If `graph` is `nil`, the exported default graph `var Default *DefaultGraph` will be used.
+
+### Serialize and parse strings
+
+Quads also have a `.String() string` method that returns the N-Quads representation of the quad, **including a trailing period, but not including a newline**. `ParseQuad(s: string): *Quad` parses a quad back from this format.

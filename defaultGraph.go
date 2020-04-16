@@ -16,6 +16,8 @@ var Default = &DefaultGraph{}
 // NewDefaultGraph creates a new default graph
 func NewDefaultGraph() *DefaultGraph { return &DefaultGraph{} }
 
+func (node *DefaultGraph) String() string { return "" }
+
 // TermType of a default graph is "DefaultGraph"
 func (node *DefaultGraph) TermType() string { return DefaultGraphType }
 

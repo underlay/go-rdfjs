@@ -1,6 +1,9 @@
 package rdfjs
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // This internal struct is used for serialization and deserialization.
 // Since we don't know what types each of the terms are, we need to
@@ -22,6 +25,14 @@ func NewQuad(subject, predicate, object, graph Term) *Quad {
 		graph = Default
 	}
 	return &Quad{subject, predicate, object, graph}
+}
+
+func (q *Quad) String() string {
+	s, p, o := q[0].String(), q[1].String(), q[2].String()
+	if q[3] == nil || q[3].TermType() == DefaultGraphType {
+		return fmt.Sprintf("%s %s %s .", s, p, o)
+	}
+	return fmt.Sprintf("%s %s %s %s .", s, p, o, q[3].String())
 }
 
 // Subject returns the first term

@@ -1,6 +1,9 @@
 package rdfjs
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // LiteralType is the TermType literals
 const LiteralType = "Literal"
@@ -17,6 +20,15 @@ type Literal struct {
 // NewLiteral creates a new literal
 func NewLiteral(value string, language string, datatype *NamedNode) *Literal {
 	return &Literal{value, language, datatype}
+}
+
+func (node *Literal) String() string {
+	if node.datatype == nil || node.datatype.value == XSDString.value {
+		return fmt.Sprintf("\"%s\"", escape(node.value))
+	} else if node.language != "" && node.datatype.value == RDFLangString.value {
+		return fmt.Sprintf("\"%s\"@%s", escape(node.value), node.language)
+	}
+	return fmt.Sprintf("\"%s\"^^<%s>", escape(node.value), node.datatype.value)
 }
 
 // TermType of a literal is "Literal"
