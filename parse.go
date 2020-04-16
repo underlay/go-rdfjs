@@ -19,14 +19,8 @@ const (
 	graph    = "(?:\\.|(?:" + node + wso + "\\.))"
 )
 
-var regexLiteral = regexp.MustCompile("^" + plain + "(?:" + datatype + "|" + language + ")?$")
+var regexNode = regexp.MustCompile("^" + node + "$")
 var regexQuad = regexp.MustCompile("^" + wso + node + ws + node + ws + node + ws + graph + wso + "$")
-
-var regexWSO = regexp.MustCompile(wso)
-
-var regexEOLN = regexp.MustCompile("(?:\\r\\n)|(?:\\n)|(?:\\r)")
-
-var regexEmpty = regexp.MustCompile("^" + wso + "$")
 
 func escape(str string) string {
 	str = strings.Replace(str, "\\", "\\\\", -1)
@@ -54,10 +48,10 @@ func ParseQuad(s string) *Quad {
 	}
 
 	q := &Quad{
-		parseQuadTerm(match[1:7]),
-		parseQuadTerm(match[7:13]),
-		parseQuadTerm(match[13:19]),
-		parseQuadTerm(match[19:25]),
+		parseNode(match[1:7]),
+		parseNode(match[7:13]),
+		parseNode(match[13:19]),
+		parseNode(match[19:25]),
 	}
 
 	if q[3] == nil {
@@ -66,18 +60,19 @@ func ParseQuad(s string) *Quad {
 	return q
 }
 
-func parseQuadTerm(match []string) Term {
+func parseNode(match []string) Term {
 	if match[0] != "" {
 		return NewNamedNode(match[0])
 	} else if match[1] != "" {
 		return NewBlankNode(match[1])
 	} else if match[2] != "" {
+		value := unescape(match[2])
 		if match[3] != "" && match[3] != XSDString.value {
-			return NewLiteral(match[2], "", NewNamedNode(match[3]))
+			return NewLiteral(value, "", NewNamedNode(match[3]))
 		} else if match[4] != "" {
-			return NewLiteral(match[2], match[4], RDFLangString)
+			return NewLiteral(value, match[4], RDFLangString)
 		} else {
-			return NewLiteral(match[2], "", nil)
+			return NewLiteral(value, "", nil)
 		}
 	} else if match[5] != "" {
 		return NewVariable(match[5])
@@ -89,20 +84,12 @@ func parseQuadTerm(match []string) Term {
 func ParseTerm(t string) (Term, error) {
 	if t == "" {
 		return Default, nil
-	} else if l := len(t); t[0] == '<' && t[l-1] == '>' {
-		return NewNamedNode(t[1 : l-1]), nil
-	} else if t[0:2] == "_:" {
-		return NewBlankNode(t), nil
-	} else if match := regexLiteral.FindStringSubmatch(t); match != nil {
-		if match[2] != "" && match[2] != XSDString.value {
-			return NewLiteral(unescape(match[1]), "", NewNamedNode(match[2])), nil
-		} else if match[3] != "" {
-			return NewLiteral(unescape(match[1]), match[3], RDFLangString), nil
-		}
-		return NewLiteral(unescape(match[1]), "", nil), nil
-	} else if t[0] == '?' {
-		return NewVariable(t), nil
-	} else {
+	}
+
+	match := regexNode.FindStringSubmatch(t)
+	if match == nil || len(match) != 7 {
 		return nil, ErrParseTerm
 	}
+
+	return parseNode(match[1:]), nil
 }
