@@ -2,7 +2,7 @@
 
 > Go implementation of the RDF data model
 
-This is a zero-dependency module implementing the RDF data model. It's a faithful and idiomatic adaptation of the [RDFJS JSON-based data model](http://rdf.js.org/data-model-spec/) and it comes with JSON marshalers and unmarshalers for easy interop with JavaScript libraries like [n3.js](https://github.com/rdfjs/N3.js), [jsonld.js](https://github.com/digitalbazaar/jsonld.js), and [graphy.js](https://github.com/blake-regalia/graphy.js).
+This is a zero-dependency module implementing the RDF data model. It's a faithful and idiomatic adaptation of the [RDFJS JSON-based interface](http://rdf.js.org/data-model-spec/) and it comes with RDFJS-compatible JSON marshalers and unmarshalers for easy interop with JavaScript libraries like [n3.js](https://github.com/rdfjs/N3.js), [jsonld.js](https://github.com/digitalbazaar/jsonld.js), and [graphy.js](https://github.com/blake-regalia/graphy.js).
 
 ## Terms
 
@@ -21,19 +21,25 @@ type Term interface {
 
 Named nodes, blank nodes, and variables all have single string value and can be created with the constructors:
 
-- `NewNamedNode(value: string) *NamedNode`
-- `NewBlankNode(value: string) *BlankNode`
-- `NewVariable(value: string) *Variable`
+```golang
+NewNamedNode(value string) *NamedNode
+NewBlankNode(value string) *BlankNode
+NewVariable(value string) *Variable
+```
 
-It's up to the user to validate that named node values are valid IRIs, that blank node values begin with `_:`, and that variable values begin with `?`.
+It's up to the user to validate that named node values are valid IRIs, blank node values begin with `_:`, and variable values begin with `?`.
 
 Default graphs have no value - the `Value() string` method always returns the empty string, and the type `DefaultGraph` is just `struct{}`. There is a "default default graph" value `var Default *DefaultGraph`, although new default graphs can be created with the constructor:
 
-- `NewDefaultGraph() *DefaultGraph`
+```golang
+NewDefaultGraph() *DefaultGraph
+```
 
 Literals have a string value, a string language, and a named node datatype, which may be `nil` (interpreted as the default datatype of `xsd:string`). A literal can be created with the constructor:
 
-- `NewLiteral(value: string, language: string, datatype: *DefaultGraph) *Literal`
+```golang
+NewLiteral(value, language string, datatype *NamedNode) *Literal
+```
 
 If the given datatype does not have a value of `rdf:langString`, then the resulting `*Literal` will have no langauge, even if one is passed. You can use the exported `var RDFLangString *NamedNode` value to avoid repeatedly constructing an `rdf:langString` term.
 
@@ -43,8 +49,10 @@ The term structs do not have internal term type fields - the `TermType() string`
 
 Each of the term structs implements `MarshalJSON` and `UnmarshalJSON`; however it is often necessary to marshal and unmarshal a term without knowing its type in advance:
 
-- `MarshalTerm(t Term) ([]byte, error)`
-- `UnmarshalTerm(data []byte) (Term, error)`
+```golang
+MarshalTerm(t Term) ([]byte, error)
+UnmarshalTerm(data []byte) (Term, error)
+```
 
 ### Serialize and parse strings
 
@@ -62,7 +70,9 @@ Quads also implement `MarshalJSON` and `UnmarshalJSON`, which serialize to the R
 
 A new quad can be created with the constructor:
 
-- `NewQuad(subject, predicate, object, graph Term) *Quad`
+```golang
+NewQuad(subject, predicate, object, graph Term) *Quad
+```
 
 The user is responsible for checking that the terms of a quad are valid for their positions (no literals as subjects, etc). If `graph` is `nil`, the "default default graph" `var Default *DefaultGraph` will be used.
 
