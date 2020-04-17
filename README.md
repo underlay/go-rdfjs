@@ -27,15 +27,17 @@ Named nodes, blank nodes, and variables all have single string value and can be 
 
 It's up to the user to validate that named node values are valid IRIs, that blank node values begin with `_:`, and that variable values begin with `?`.
 
-Default graphs have no value - the `Value() string` method always returns the empty string, and the type `DefaultGraph` is just `struct{}`. A default graph can be created with the constructor:
+Default graphs have no value - the `Value() string` method always returns the empty string, and the type `DefaultGraph` is just `struct{}`. There is a "default default graph" value `var Default *DefaultGraph`, although new default graphs can be created with the constructor:
 
 - `NewDefaultGraph() *DefaultGraph`
 
-Literals have a string value, a string language, and a named node datatype, which may be `nil` (indicating the default datatype of `xsd:string`). A literal can be created with the constructor:
+Literals have a string value, a string language, and a named node datatype, which may be `nil` (interpreted as the default datatype of `xsd:string`). A literal can be created with the constructor:
 
 - `NewLiteral(value: string, language: string, datatype: *DefaultGraph) *Literal`
 
 If the given datatype does not have a value of `rdf:langString`, then the resulting `*Literal` will have no langauge, even if one is passed. You can use the exported `var RDFLangString *NamedNode` value to avoid repeatedly constructing an `rdf:langString` term.
+
+The term structs do not have internal term type fields - the `TermType(): string` method is a constant function on each struct _type_. This is done to save memory.
 
 ### Marshal and Unmarshal generic terms
 
@@ -56,13 +58,13 @@ type Quad [4]Term
 
 Quads are represented interally as 4-tuples of `Term` interfaces. This was chosen instead of a struct type to support advanced uses like arithmetic or permutations of term positions. Quad terms can be accessed by name with the `.Subject(): Term`, `.Predicate(): Term`, `.Object(): Term`, and `.Graph(): Term` methods.
 
-Quads implement also `MarshalJSON` and `UnmarshalJSON`.
+Quads also implement `MarshalJSON` and `UnmarshalJSON`, which serialize to the RDFJS object representation (`{"subject": { }, ...}`).
 
 A new quad can be created with the constructor:
 
 - `NewQuad(subject, predicate, object, graph Term) *Quad`
 
-The user is responsible for checking that the terms of a quad are valid for their positions (literals as subjects, etc). If `graph` is `nil`, the exported default graph `var Default *DefaultGraph` will be used.
+The user is responsible for checking that the terms of a quad are valid for their positions (no literals as subjects, etc). If `graph` is `nil`, the "default default graph" `var Default *DefaultGraph` will be used.
 
 ### Serialize and parse strings
 
