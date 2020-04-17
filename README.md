@@ -51,7 +51,7 @@ Terms also implement a `.String() string` method that return their N-Quads term 
 ## Quads
 
 ```golang
-type Quad = [4]Term
+type Quad [4]Term
 ```
 
 Quads are represented interally as 4-tuples of `Term` interfaces. This was chosen instead of a struct type to support advanced uses like arithmetic or permutations of term positions. Quad terms can be accessed by name with the `.Subject(): Term`, `.Predicate(): Term`, `.Object(): Term`, and `.Graph(): Term` methods.
