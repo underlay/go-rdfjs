@@ -37,7 +37,7 @@ Literals have a string value, a string language, and a named node datatype, whic
 
 If the given datatype does not have a value of `rdf:langString`, then the resulting `*Literal` will have no langauge, even if one is passed. You can use the exported `var RDFLangString *NamedNode` value to avoid repeatedly constructing an `rdf:langString` term.
 
-The term structs do not have internal term type fields - the `TermType(): string` method is a constant function on each struct _type_. This is done to save memory.
+The term structs do not have internal term type fields - the `TermType() string` method is a constant function on each struct _type_. This is done to save memory.
 
 ### Marshal and Unmarshal generic terms
 
