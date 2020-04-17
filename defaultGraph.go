@@ -1,4 +1,4 @@
-package rdfjs
+package rdf
 
 import "encoding/json"
 
@@ -26,7 +26,7 @@ func (node *DefaultGraph) Value() string { return "" }
 
 // Equal checks for functional equivalence of terms
 func (node *DefaultGraph) Equal(term Term) bool {
-	return term.TermType() == NamedNodeType && term.Value() == ""
+	return term.TermType() == DefaultGraphType && term.Value() == ""
 }
 
 // MarshalJSON marshals the literal into a byte slice

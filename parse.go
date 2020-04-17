@@ -1,4 +1,4 @@
-package rdfjs
+package rdf
 
 import (
 	"regexp"
