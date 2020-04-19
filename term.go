@@ -85,28 +85,19 @@ func UnmarshalTerm(data []byte) (Term, error) {
 	return nil, nil
 }
 
-// MarshalTerm marshals a Term into a byte slice
-func MarshalTerm(t Term) ([]byte, error) {
-	var result interface{}
-	tt := termType{t.TermType()}
-	switch tt.TermType {
-	case NamedNodeType:
-		result = &value{tt, t.Value()}
-	case BlankNodeType:
-		result = &value{tt, t.Value()}
-	case LiteralType:
-		switch t := t.(type) {
-		case TermLiteral:
-			d := t.Datatype()
-			datatype := &value{termType{d.TermType()}, d.Value()}
-			result = &term{value{tt, t.Value()}, t.Language(), datatype}
-		default:
-			return nil, ErrTermType
-		}
-	case DefaultGraphType:
-		result = tt
-	case VariableType:
-		result = &value{tt, t.Value()}
+// UnmarshalTerms unmarshals a JSON array of RDFJS terms into a slice of rdf.Terms
+func UnmarshalTerms(data []byte) ([]Term, error) {
+	terms := []json.RawMessage{}
+	err := json.Unmarshal(data, &terms)
+	if err != nil {
+		return nil, err
 	}
-	return json.Marshal(result)
+	t := make([]Term, len(terms))
+	for i, term := range terms {
+		t[i], err = UnmarshalTerm(term)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return t, nil
 }
