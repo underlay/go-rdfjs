@@ -64,7 +64,7 @@ func parseNode(match []string) Term {
 	if match[0] != "" {
 		return NewNamedNode(match[0])
 	} else if match[1] != "" {
-		return NewBlankNode(match[1])
+		return NewBlankNode(match[1][2:])
 	} else if match[2] != "" {
 		value := unescape(match[2])
 		if match[3] != "" && match[3] != XSDString.value {
@@ -75,7 +75,7 @@ func parseNode(match []string) Term {
 			return NewLiteral(value, "", nil)
 		}
 	} else if match[5] != "" {
-		return NewVariable(match[5])
+		return NewVariable(match[5][1:])
 	}
 	return nil
 }

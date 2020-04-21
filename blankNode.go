@@ -13,7 +13,7 @@ type BlankNode struct{ value string }
 // NewBlankNode creates a new blank node
 func NewBlankNode(value string) *BlankNode { return &BlankNode{value} }
 
-func (node *BlankNode) String() string { return node.value }
+func (node *BlankNode) String() string { return "_:" + node.value }
 
 // TermType of a blank node is "BlankNode"
 func (node *BlankNode) TermType() string { return BlankNodeType }
