@@ -1,6 +1,8 @@
 package rdf
 
 import (
+	"bufio"
+	"io"
 	"regexp"
 	"strings"
 )
@@ -92,4 +94,22 @@ func ParseTerm(t string) (Term, error) {
 	}
 
 	return parseNode(match[1:]), nil
+}
+
+// ReadQuads parses an io.Reader of serialize n-quads into a slice of *Quads
+func ReadQuads(input io.Reader) ([]*Quad, error) {
+	quads := []*Quad{}
+	reader := bufio.NewReader(input)
+	line, err := reader.ReadString('\n')
+	for ; err == nil; line, err = reader.ReadString('\n') {
+		if line != "" {
+			quads = append(quads, ParseQuad(line))
+		}
+	}
+
+	if err != io.EOF {
+		return nil, err
+	}
+
+	return quads, nil
 }
