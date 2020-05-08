@@ -41,7 +41,7 @@ func (node *Literal) Value() string { return node.value }
 func (node *Literal) Language() string { return node.language }
 
 // Datatype of a literal returns the literal's datatype
-func (node *Literal) Datatype() *NamedNode {
+func (node *Literal) Datatype() Term {
 	if node.datatype != nil {
 		return node.datatype
 	}
@@ -55,8 +55,12 @@ func (node *Literal) Equal(term Term) bool {
 	}
 
 	switch term := term.(type) {
+	case *Literal:
+		return term.language == node.language &&
+			((term.datatype == nil && node.datatype == nil) ||
+				term.datatype.value == node.datatype.value)
 	case TermLiteral:
-		return term.Language() == node.language && term.Datatype().Equal(node.datatype)
+		return term.Language() == node.language && term.Datatype().Equal(node.Datatype())
 	default:
 		return false
 	}

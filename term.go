@@ -55,6 +55,10 @@ type term struct {
 
 // UnmarshalTerm unmarshals a byte slice into a Term
 func UnmarshalTerm(data []byte) (Term, error) {
+	if string(data) == "null" {
+		return nil, nil
+	}
+
 	t := &term{}
 	err := json.Unmarshal(data, t)
 	if err != nil {
