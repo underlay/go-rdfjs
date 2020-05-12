@@ -103,7 +103,10 @@ func ReadQuads(input io.Reader) ([]*Quad, error) {
 	line, err := reader.ReadString('\n')
 	for ; err == nil; line, err = reader.ReadString('\n') {
 		if line != "" {
-			quads = append(quads, ParseQuad(line))
+			quad := ParseQuad(line)
+			if quad != nil {
+				quads = append(quads, quad)
+			}
 		}
 	}
 
