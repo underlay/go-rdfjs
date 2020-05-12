@@ -27,9 +27,9 @@ NewBlankNode(value string) *BlankNode
 NewVariable(value string) *Variable
 ```
 
-It's up to the user to validate that named node values are valid IRIs, blank node values begin with `_:`, and variable values begin with `?`.
+It's up to the user to validate that named node values are valid IRIs. [Per the RDFJS spec](http://rdf.js.org/data-model-spec/#blanknode-interface), blank node values should **not** begin with `_:`, and variable values should **not** begin with `?`.
 
-Default graphs have no value - the `Value() string` method always returns the empty string, and the type `DefaultGraph` is just `struct{}`. There is a "default default graph" value `var Default *DefaultGraph`, although new default graphs can be created with the constructor:
+Default graphs have no value - the `Value() string` method always returns the empty string, and the type `DefaultGraph` is just `struct{}`. There is a "default default graph" value `var Default *DefaultGraph` that is recommended for most purposes, although new default graphs can also be created with the constructor:
 
 ```golang
 NewDefaultGraph() *DefaultGraph
@@ -79,3 +79,5 @@ The user is responsible for checking that the terms of a quad are valid for thei
 ### Serialize and parse strings
 
 Quads also have a `.String() string` method that returns the N-Quads representation of the quad, **including a trailing period, but not including a newline**. `ParseQuad(s: string): *Quad` parses a quad back from this format.
+
+You can also parse a slice of quads out of an `io.Reader` using `ReadQuads(input io.Reader) ([]*Quad, error)`.
