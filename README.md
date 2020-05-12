@@ -45,12 +45,11 @@ If the given datatype does not have a value of `rdf:langString`, then the result
 
 The term structs do not have internal term type fields - the `TermType() string` method is a constant function on each struct _type_. This is done to save memory.
 
-### Marshal and Unmarshal generic terms
+### Unmarshal generic terms
 
-Each of the term structs implements `MarshalJSON` and `UnmarshalJSON`; however it is often necessary to marshal and unmarshal a term without knowing its type in advance:
+Each of the term structs implements `MarshalJSON` and `UnmarshalJSON`; however it is often necessary to unmarshal a term without knowing its type in advance:
 
 ```golang
-MarshalTerm(t Term) ([]byte, error)
 UnmarshalTerm(data []byte) (Term, error)
 ```
 
@@ -66,7 +65,7 @@ type Quad [4]Term
 
 Quads are represented interally as 4-tuples of `Term` interfaces. This was chosen instead of a struct type to support advanced uses like arithmetic or permutations of term positions. Quad terms can be accessed by name with the `.Subject(): Term`, `.Predicate(): Term`, `.Object(): Term`, and `.Graph(): Term` methods.
 
-Quads also implement `MarshalJSON` and `UnmarshalJSON`, which serialize to the RDFJS object representation (`{"subject": { }, ...}`).
+Quads also implement `MarshalJSON` and `UnmarshalJSON`, which serialize to and from the RDFJS object representation of quads (`{"subject": { }, ...}`). Internally, `Quad.UnmarshalJSON` calls the generic `UnmarshalTerm` for each of its components.
 
 A new quad can be created with the constructor:
 
