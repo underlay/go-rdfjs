@@ -22,7 +22,7 @@ const (
 )
 
 var regexNode = regexp.MustCompile("^" + node + "$")
-var regexQuad = regexp.MustCompile("^" + wso + node + ws + node + ws + node + ws + graph + wso + "$")
+var regexQuad = regexp.MustCompile("^" + wso + node + ws + node + ws + node + ws + graph + wso + "\n?$")
 
 func escape(str string) string {
 	str = strings.Replace(str, "\\", "\\\\", -1)
